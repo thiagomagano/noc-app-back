@@ -1,38 +1,42 @@
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
-import { cors } from 'hono/cors'
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import "dotenv/config";
+import { logger } from "hono/logger";
 
-const app = new Hono()
-app.use('/', cors({
-  origin: 'https://noc.thiagomagano.com',
-  allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests'],
-  allowMethods: ['POST', 'GET', 'OPTIONS'],
-  exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
-  maxAge: 600,
-  credentials: true,
-}))
+const app = new Hono().basePath("/api");
+app.use("/api/*", cors());
 
-app.get('/', (c) => {
+app.use(logger());
+
+// TODO: Importar Rotas
+
+app.get("/", (c) => {
   return c.json({
     ok: true,
-    message: "N.O.C.U FUTSAL TEAM CORS"
-  })
-})
+    message: "N.O.C.U FUTSAL",
+  });
+});
 
-app.get('/player/:id', (c) => {
-  const id = c.req.param('id')
+app.get("/players/list", (c) => {
+  // Pegar todos jogadores da base de dados
+  const players = ["Thiago", "Paulinho", "Marcel", "Thales"];
 
-  return c.json({
-    status: 200,
-    message: "Jogador Requisitado",
-    id: id
-  })
-})
+  return c.json(players);
+});
 
-const port = 3131
-console.log(`Server is running on http://localhost:${port}`)
+app.get("/players/:id", (c) => {
+  const player = c.req.param("id");
+
+  //logica pra achar o jogador findUnique(id)
+
+  return c.json({ id: player });
+});
+
+const port = 3131;
+console.log(`Server is running on http://localhost:${port}`);
 
 serve({
   fetch: app.fetch,
-  port
-})
+  port,
+});
