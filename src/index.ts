@@ -19,6 +19,16 @@ app.get('/', (c) => {
   })
 })
 
+app.get('/player/:id', (c) => {
+  const id = c.req.param('id')
+
+  return c.json({
+    status: 200,
+    message: "Jogador Requisitado",
+    id: id
+  })
+})
+
 const port = 3131
 console.log(`Server is running on http://localhost:${port}`)
 
