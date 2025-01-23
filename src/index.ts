@@ -33,6 +33,20 @@ app.get("/players/:id", (c) => {
   return c.json({ id: player });
 });
 
+app.post("/players/create", async (c) => {
+  //Confirir se os dados estão correots
+  const player = await c.req.json();
+
+  // Salvar Jogador no banco
+  //const ok = createPlayer(player);
+
+  // Retornar o jogador criado e mensagem de sucesso
+  return c.json({
+    message: "Jogador criado com sucesso!",
+    jogador: player,
+  });
+});
+
 const port = 3131;
 console.log(`Server is running on http://localhost:${port}`);
 
