@@ -3,11 +3,12 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
 
-const app = new Hono();
-
-// TODO: Importar Rotas
+export function createRouter() {
+  return new Hono({ strict: false });
+}
 
 export default function createApp() {
+  const app = createRouter();
   app.use(cors());
   app.use(logger());
 
