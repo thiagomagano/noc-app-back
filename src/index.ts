@@ -4,7 +4,7 @@ import env from "@/env";
 
 import "dotenv/config";
 
-const port = env.PORT;
+const port = env?.PORT;
 console.log(`Server is running on http://localhost:${port}`);
 
 serve({
