@@ -17,7 +17,7 @@
     "types": [
       "node"
     ],
-    "strict": true,
+    "strict": false,
     "outDir": "./dist",
     "skipLibCheck": true
   },

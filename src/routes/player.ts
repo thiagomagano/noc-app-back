@@ -12,10 +12,10 @@ const playerSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   phone: z.string(),
   position: z.enum(["linha", "goleiro"]),
-  skillLevel: z.enum(["1", "2", "3", "4", "5"]),
-  winsCount: z.number().optional(),
-  gamesPlayed: z.number().optional(),
-  shirtNumber: z.number().optional(),
+  skill: z.enum(["1", "2", "3", "4", "5"]),
+  wins: z.number().optional(),
+  games: z.number().optional(),
+  shirt: z.number().optional(),
   image: z.string().url().optional(),
 });
 
@@ -82,10 +82,10 @@ playersRouter.patch("/:id", async (c) => {
     name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").optional(),
     phone: z.string().optional(),
     position: z.enum(["linha", "goleiro"]).optional(),
-    skillLevel: z.enum(["1", "2", "3", "4", "5"]).optional(),
-    winsCount: z.number().optional(),
-    gamesPlayed: z.number().optional(),
-    shirtNumber: z.number().optional(),
+    skill: z.enum(["1", "2", "3", "4", "5"]).optional(),
+    wins: z.number().optional(),
+    games: z.number().optional(),
+    shirt: z.number().optional(),
     image: z.string().url().optional(),
   });
 
