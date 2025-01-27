@@ -120,6 +120,27 @@ playersRouter.patch("/:id", async (c) => {
   }
 });
 
-playersRouter.delete("/:id", async (c) => {});
+playersRouter.delete("/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+
+    idSchema.parse(id);
+
+    const existingPlayer = await db
+      .select()
+      .from(playersTable)
+      .where(eq(playersTable.id, Number(id)));
+
+    if (!existingPlayer.length) {
+      return c.json({ error: "Jogador não encontrado" }, 404);
+    }
+
+    await db.delete(playersTable).where(eq(playersTable.id, Number(id)));
+
+    return c.json({ message: "Jogador deletado com sucesso!" });
+  } catch (error) {
+    return c.json({ error: error || "Erro ao deletar jogador" }, 400);
+  }
+});
 
 export default playersRouter;
