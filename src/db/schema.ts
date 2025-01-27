@@ -1,11 +1,9 @@
-import { char } from "drizzle-orm/mysql-core";
 import {
   integer,
   pgTable,
   varchar,
   timestamp,
   text,
-  pgEnum,
 } from "drizzle-orm/pg-core";
 
 const timestamps = {
@@ -29,6 +27,7 @@ export const playersTable = pgTable("players", {
   position: varchar({ length: 30 }).notNull(),
   skillLevel: varchar({ length: 30 }).notNull(),
   winsCount: integer(),
+  gamesPlayed: integer(),
   shirtNumber: integer(),
   image: varchar(),
   ...timestamps,

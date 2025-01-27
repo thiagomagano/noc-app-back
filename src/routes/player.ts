@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/db/db";
 import { playersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { IdParamsSchema } from "stoker/openapi/schemas";
 
 const playersRouter = new Hono();
 
@@ -13,9 +14,12 @@ const playerSchema = z.object({
   position: z.enum(["linha", "goleiro"]),
   skillLevel: z.enum(["1", "2", "3", "4", "5"]),
   winsCount: z.number().optional(),
+  gamesPlayed: z.number().optional(),
   shirtNumber: z.number().optional(),
   image: z.string().url().optional(),
 });
+
+const idSchema = z.coerce.number();
 
 playersRouter.get("/list", async (c) => {
   try {
@@ -30,7 +34,7 @@ playersRouter.get("/:id", async (c) => {
   try {
     const id = c.req.param("id");
 
-    const idSchema = z.coerce.number();
+    c;
 
     idSchema.parse(id);
 
@@ -72,5 +76,50 @@ playersRouter.post("/create", async (c) => {
     return c.json({ error, mensage: "não foi possível criar jogador" }, 400);
   }
 });
+
+playersRouter.patch("/:id", async (c) => {
+  const updatePlayerSchema = z.object({
+    name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").optional(),
+    phone: z.string().optional(),
+    position: z.enum(["linha", "goleiro"]).optional(),
+    skillLevel: z.enum(["1", "2", "3", "4", "5"]).optional(),
+    winsCount: z.number().optional(),
+    gamesPlayed: z.number().optional(),
+    shirtNumber: z.number().optional(),
+    image: z.string().url().optional(),
+  });
+
+  try {
+    const id = c.req.param("id");
+    const body = await c.req.json();
+
+    idSchema.parse(id);
+
+    const updateData = updatePlayerSchema.parse(body);
+
+    const existingPlayer = await db
+      .select()
+      .from(playersTable)
+      .where(eq(playersTable.id, Number(id)));
+
+    if (!existingPlayer.length) {
+      return c.json({ error: "jogador não encontrado" }, 404);
+    }
+    const [updatedPlayer] = await db
+      .update(playersTable)
+      .set(updateData)
+      .where(eq(playersTable.id, Number(id)))
+      .returning();
+
+    return c.json(
+      { message: "Jogador atualizado com sucesso!", player: updatedPlayer },
+      202
+    );
+  } catch (error) {
+    return c.json({ error }, 400);
+  }
+});
+
+playersRouter.delete("/:id", async (c) => {});
 
 export default playersRouter;
