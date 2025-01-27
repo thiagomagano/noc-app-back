@@ -1,5 +1,6 @@
 import createApp from "@/lib/create-app";
 import auth from "./routes/auth";
+import players from "@/routes/player";
 
 const app = createApp();
 
@@ -18,5 +19,6 @@ app.get("/error", (c) => {
 });
 
 app.route("/auth", auth);
+app.route("/players", players);
 
 export default app;
