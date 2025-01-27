@@ -16,6 +16,6 @@ export const adminsTable = pgTable("admins", {
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
   password: text().notNull(),
-  phone: varchar({ length: 255 }).unique(),
+  phone: varchar({ length: 30 }).unique(),
   ...timestamps,
 });

@@ -1,4 +1,5 @@
 import createApp from "@/lib/create-app";
+import auth from "./routes/auth";
 
 const app = createApp();
 
@@ -15,5 +16,7 @@ app.get("/error", (c) => {
   c.status(422);
   throw new Error("OH NO!");
 });
+
+app.route("/auth", auth);
 
 export default app;
