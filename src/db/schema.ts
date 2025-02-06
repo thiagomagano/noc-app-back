@@ -1,34 +1,37 @@
-import {
-  integer,
-  pgTable,
-  varchar,
-  timestamp,
-  text,
-} from "drizzle-orm/pg-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 const timestamps = {
-  updated_at: timestamp(),
-  created_at: timestamp().defaultNow().notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .$onUpdate(() => new Date()),
 };
 
-export const adminsTable = pgTable("admins", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar({ length: 255 }).notNull(),
-  email: varchar({ length: 255 }).notNull().unique(),
+export const admins = sqliteTable("admins", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  name: text().notNull(),
+  email: text().notNull().unique(),
   password: text().notNull(),
-  phone: varchar({ length: 30 }).unique(),
+  phone: text().unique(),
   ...timestamps,
 });
 
-export const playersTable = pgTable("players", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar({ length: 255 }).notNull(),
-  phone: varchar({ length: 30 }).notNull(),
-  position: varchar({ length: 30 }).notNull(),
-  skill: varchar({ length: 30 }).notNull(),
-  wins: integer(),
-  games: integer(),
-  shirt: integer(),
-  image: varchar(),
+export const selectAdminsSchema = createSelectSchema(admins);
+
+export const insertAdminsSchema = createInsertSchema(admins);
+
+export const players = sqliteTable("players", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  name: text().notNull(),
+  skill: integer("skill_level").notNull(),
+  phone: text("phone_number").notNull(),
+  shirt: integer("shirt_number"),
+  isGoalkeaper: integer("is_goalkeaper", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  image: text(),
   ...timestamps,
 });

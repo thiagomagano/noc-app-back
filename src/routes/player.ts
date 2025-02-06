@@ -1,9 +1,8 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import { db } from "@/db/db";
+import { db } from "@/db";
 import { playersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { IdParamsSchema } from "stoker/openapi/schemas";
 
 const playersRouter = new Hono();
 

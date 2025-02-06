@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { sign } from "hono/jwt";
 import bcrypt from "bcrypt";
 import { adminsTable } from "@/db/schema"; // Tabela de administradores
-import { db } from "@/db/db"; // Conexão com o banco de dados
+import { db } from "@/db"; // Conexão com o banco de dados
 
 const auth = new Hono();
 

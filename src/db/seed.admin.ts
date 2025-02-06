@@ -1,5 +1,5 @@
-import { db } from "@/db/db"; // Conexão com o banco
-import { adminsTable } from "@/db/schema"; // Tabela de administradores
+import db from "@/db"; // Conexão com o banco
+import { admins } from "@/db/schema"; // Tabela de administradores
 import bcrypt from "bcrypt";
 
 async function seed() {
@@ -8,14 +8,14 @@ async function seed() {
   // Definir dados do administrador de teste
   const adminData = {
     name: "Admin Test",
-    email: "admin@email.com",
+    email: "admin-test@email.com",
     password: await bcrypt.hash("senha123", 10), // Hash da senha
     phone: "+55 11 99999-9999",
   };
 
   try {
     // Inserir administrador no banco
-    await db.insert(adminsTable).values(adminData);
+    await db.insert(admins).values(adminData);
     console.log("✅ Administrador de teste criado com sucesso!");
   } catch (error) {
     console.error("❌ Erro ao inserir administrador:", error);
