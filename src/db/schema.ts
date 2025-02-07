@@ -1,5 +1,4 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 const timestamps = {
   createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
@@ -19,17 +18,15 @@ export const admins = sqliteTable("admins", {
   ...timestamps,
 });
 
-export const selectAdminsSchema = createSelectSchema(admins);
-
-export const insertAdminsSchema = createInsertSchema(admins);
-
 export const players = sqliteTable("players", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text().notNull(),
-  skill: integer("skill_level").notNull(),
   phone: text("phone_number").notNull(),
+  email: text(),
+  skill: integer("skill_level").notNull(),
+  stamina: integer().notNull(),
   shirt: integer("shirt_number"),
-  isGoalkeaper: integer("is_goalkeaper", { mode: "boolean" })
+  isGoalkeeper: integer("is_goalkeaper", { mode: "boolean" })
     .notNull()
     .default(false),
   image: text(),

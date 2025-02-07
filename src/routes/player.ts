@@ -1,28 +1,26 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import { db } from "@/db";
-import { playersTable } from "@/db/schema";
+import db from "@/db";
+import { players } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 const playersRouter = new Hono();
 
-// Definição do schema de validação com Zod
 const playerSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   phone: z.string(),
-  position: z.enum(["linha", "goleiro"]),
-  skill: z.enum(["1", "2", "3", "4", "5"]),
-  wins: z.number().optional(),
-  games: z.number().optional(),
-  shirt: z.number().optional(),
+  position: z.boolean(),
+  skill: z.number().int().min(1).max(5),
+  stamina: z.number().int().min(1).max(5),
+  shirt: z.number().int().min(1).max(99),
   image: z.string().url().optional(),
 });
 
 const idSchema = z.coerce.number();
 
-playersRouter.get("/list", async (c) => {
+playersRouter.get("/", async (c) => {
   try {
-    const allPlayers = await db.select().from(playersTable);
+    const allPlayers = await db.select().from(players);
     return c.json({ players: allPlayers });
   } catch (error) {
     return c.json({ error }, 500);
@@ -33,16 +31,12 @@ playersRouter.get("/:id", async (c) => {
   try {
     const id = c.req.param("id");
 
-    c;
-
     idSchema.parse(id);
-
-    //logica pra achar o jogador findUnique(id)
 
     const player = await db
       .select()
-      .from(playersTable)
-      .where(eq(playersTable.id, Number(id)));
+      .from(players)
+      .where(eq(players.id, Number(id)));
 
     if (!player.length) {
       return c.json({ error: "Jogador não encontrado" }, 404);
@@ -54,7 +48,7 @@ playersRouter.get("/:id", async (c) => {
   }
 });
 
-playersRouter.post("/create", async (c) => {
+playersRouter.post("/", async (c) => {
   try {
     const body = await c.req.json();
 
@@ -62,10 +56,8 @@ playersRouter.post("/create", async (c) => {
     const playerData = playerSchema.parse(body);
 
     // Inserção no banco de dados
-    const [newPlayer] = await db
-      .insert(playersTable)
-      .values(playerData)
-      .returning();
+    //@ts-ignore
+    const [newPlayer] = await db.insert(players).values(playerData).returning();
 
     return c.json(
       { message: "Jogador criado com sucesso!", player: newPlayer },
@@ -80,11 +72,10 @@ playersRouter.patch("/:id", async (c) => {
   const updatePlayerSchema = z.object({
     name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").optional(),
     phone: z.string().optional(),
-    position: z.enum(["linha", "goleiro"]).optional(),
-    skill: z.enum(["1", "2", "3", "4", "5"]).optional(),
-    wins: z.number().optional(),
-    games: z.number().optional(),
-    shirt: z.number().optional(),
+    position: z.boolean().optional(),
+    skill: z.number().int().min(1).max(5).optional(),
+    stamina: z.number().int().min(1).max(5).optional(),
+    shirt: z.number().int().min(1).max(99).optional(),
     image: z.string().url().optional(),
   });
 
@@ -98,16 +89,16 @@ playersRouter.patch("/:id", async (c) => {
 
     const existingPlayer = await db
       .select()
-      .from(playersTable)
-      .where(eq(playersTable.id, Number(id)));
+      .from(players)
+      .where(eq(players.id, Number(id)));
 
     if (!existingPlayer.length) {
       return c.json({ error: "jogador não encontrado" }, 404);
     }
     const [updatedPlayer] = await db
-      .update(playersTable)
+      .update(players)
       .set(updateData)
-      .where(eq(playersTable.id, Number(id)))
+      .where(eq(players.id, Number(id)))
       .returning();
 
     return c.json(
@@ -127,14 +118,14 @@ playersRouter.delete("/:id", async (c) => {
 
     const existingPlayer = await db
       .select()
-      .from(playersTable)
-      .where(eq(playersTable.id, Number(id)));
+      .from(players)
+      .where(eq(players.id, Number(id)));
 
     if (!existingPlayer.length) {
       return c.json({ error: "Jogador não encontrado" }, 404);
     }
 
-    await db.delete(playersTable).where(eq(playersTable.id, Number(id)));
+    await db.delete(players).where(eq(players.id, Number(id)));
 
     return c.json({ message: "Jogador deletado com sucesso!" });
   } catch (error) {

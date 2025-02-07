@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import { eq } from "drizzle-orm";
 import { sign } from "hono/jwt";
 import bcrypt from "bcrypt";
-import { adminsTable } from "@/db/schema"; // Tabela de administradores
-import { db } from "@/db"; // Conexão com o banco de dados
+import { admins } from "@/db/schema"; // Tabela de administradores
+import db from "@/db"; // Conexão com o banco de dados
 
 const auth = new Hono();
 
@@ -13,10 +13,7 @@ auth.post("/login", async (c) => {
   const { email, password } = await c.req.json();
 
   // Buscar administrador no banco de dados
-  const result = await db
-    .select()
-    .from(adminsTable)
-    .where(eq(adminsTable.email, email));
+  const result = await db.select().from(admins).where(eq(admins.email, email));
   const user = result[0];
 
   if (!user) {
