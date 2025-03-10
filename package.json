@@ -2,7 +2,9 @@
   "name": "noc-app-back",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "db:push": "npx drizzle-kit push",
+    "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
     "@faker-js/faker": "^9.4.0",
